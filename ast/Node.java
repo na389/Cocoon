@@ -20,4 +20,16 @@ public class Node {
 	public void setTag(String s) {
 		this.op = s;
 	}
+	
+	public Node getRight(){
+		return this.right;
+	}
+		
+	public Node getLeft(){
+		return this.left;
+	}
+		
+	public void getTag(){
+		System.out.println(this.op);
+	}
 }

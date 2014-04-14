@@ -13,11 +13,12 @@
 %%
 
 program	:
-	MAIN '{' stmts '}' 		{root = (Node) $3; }
+	MAIN '{' stmts '}' 		{root = (Node) $3;
+					 ((Node)root).setTag("root"); }
 	;
 
 stmts	: stmt				{$$ = $1;}
-	| stmt stmts			{$$ = new ParserVal(new Node("STMT", $1, $2)); }
+	| stmt stmts			{$$ = new Node("STMT", $1, $2);					 }
 	; 
 
 stmt	: 
@@ -28,33 +29,36 @@ stmt	:
 
 decl	:
 	IMG id ';'			{
-					$$ = new ParserVal(new Node("DECL", $2));
+					$$ = new Node("DECL",$2);
 					System.out.println("After DECL");}
 	;
 
 assignment
 	: 
-	id '=' expr ';'			{$$ = new ParserVal(new Node("=", $1, $3));} 
+	id '=' expr ';'			{$$ = new Node("=", $1, $3);} 
 	;
 
 expr 	: 
 	id				{$$ = $1;} 
-	| id '[' num ']'		{$$ = new ParserVal(new Node("ARRAY", $1, $3));}
-	| GREYSCALE '(' id ')'		{$$ = new ParserVal(new Node("GREYSCALE", $3)); }
+	| id '[' num ']'		{$$ = new Node("ARRAY", $1, $3);
+					 System.out.println("ARRAY");}
+	| GREYSCALE '(' id ')'		{$$ = new Node("GREYSCALE", $3); 				
+					 System.out.println("GREYSCALE");}
 	;
 
 s_call  :
-	SYSOUT '(' id ')' ';'		{$$ = new ParserVal(new Node("SYSOUT", $3));}
+	SYSOUT '(' id ')' ';'		{$$ = new Node("SYSOUT", $3);
+					 System.out.println("sysout");}
 	;
 
 id :
-	ID				{$$ = new ParserVal(new IDLeaf($1));
+	ID				{$$ = new IDLeaf($1);
 					 System.out.println("id = " + $1); }
 	;
 
 num	:
 	NUM				{System.out.println("num =" + $1);
-					 $$ = new ParserVal(new NumLeaf($1));}
+					 $$ = new NumLeaf($1);}
 	;
 
 
@@ -86,7 +90,21 @@ num	:
   }
 
   public static void main(String args[]) throws IOException {
-    //System.out.println("Cocoon Parsing");
+    System.out.println("Cocoon Parsing");
     Parser yyparser = new Parser(new FileReader(args[0]));
     yyparser.yyparse();
+    yyparser. root.getTag(); 
+    inOrderTraversal(yyparser.root);
   }
+
+  public static Node inOrderTraversal(Node root) {
+	 if(root == null){
+		 return null;
+	 }else{
+		 inOrderTraversal(root.getLeft());
+		 root.getTag();		
+		 inOrderTraversal(root.getRight());
+	 }
+	 return root;
+   }
+

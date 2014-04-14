@@ -1,8 +1,8 @@
 # only works with the Java extension of yacc: 
 # byacc/j from http://troi.lincom-asg.com/~rjamison/byacc/
 
-JFLEX  = /usr/share/jflex-1.5.1/bin/jflex 
-BYACCJ = byaccj -J
+JFLEX  = /usr/bin/jflex 
+BYACCJ = byacc -J
 JAVAC  = javac
 
 # targets:
