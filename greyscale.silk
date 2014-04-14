@@ -1,0 +1,6 @@
+main {
+	img m;
+	m = roses[0];
+	m = greyscale(m);
+	sysout(m);
+} 
