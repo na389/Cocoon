@@ -3,6 +3,7 @@
  import ast.NumLeaf;
  import ast.IDLeaf;
  import java.io.*;
+ import java.util.ArrayList;
 %}
       
 %token MAIN IMG GREYSCALE SYSOUT
@@ -13,42 +14,46 @@
 %%
 
 program	:
-	MAIN '{' stmts '}' 		{root = (Node) $3;
-					 ((Node)root).setTag("root"); }
+	MAIN '{' stmts '}' 		{/* Traversal */
+					 System.out.println("program { stmts }");}
 	;
 
-stmts	: stmt				{$$ = $1;}
-	| stmt stmts			{$$ = new Node("STMT", $1, $2);					 }
+stmts	: 				{System.out.println("stmts -> epsilon");}
+	| stmt stmts			{System.out.println("stmts -> stmt stmts");}					 
 	; 
 
 stmt	: 
-	decl				{$$ = $1;}
-	| assignment 			{$$ = $1;}
-	| s_call			{$$ = $1;}
+	decl				{root.add((Node) $1);
+					 System.out.println("stmt -> decl");}
+	| assignment 			{root.add((Node) $1);
+					 System.out.println("stmt -> assignment");}
+	| s_call			{root.add((Node) $1);
+					 System.out.println("stmt -> s_call");}
 	;
 
 decl	:
-	IMG id ';'			{
-					$$ = new Node("DECL",$2);
-					System.out.println("After DECL");}
+	IMG id ';'			{$$ = new Node("DECL", new IDLeaf("IMG"), $2);
+					 System.out.println("decl -> IMG id ;");}
 	;
 
 assignment
 	: 
-	id '=' expr ';'			{$$ = new Node("=", $1, $3);} 
+	id '=' expr ';'			{$$ = new Node("=", $1, $3);
+					 System.out.println("assignment -> id = expr ;");} 
 	;
 
 expr 	: 
-	id				{$$ = $1;} 
-	| id '[' num ']'		{$$ = new Node("ARRAY", $1, $3);
-					 System.out.println("ARRAY");}
+	id				{$$ = $1;
+					 System.out.println("expr -> id");} 
+	| id '[' num ']'		{$$ = new Node("BATCH", $1, $3);
+					 System.out.println("expr -> id [ num ]");}
 	| GREYSCALE '(' id ')'		{$$ = new Node("GREYSCALE", $3); 				
-					 System.out.println("GREYSCALE");}
+					 System.out.println("expr -> GREYSCALE ( id )");}
 	;
 
 s_call  :
 	SYSOUT '(' id ')' ';'		{$$ = new Node("SYSOUT", $3);
-					 System.out.println("sysout");}
+					 System.out.println("s_call -> SYSOUT ( id ) ;");}
 	;
 
 id :
@@ -57,15 +62,15 @@ id :
 	;
 
 num	:
-	NUM				{System.out.println("num =" + $1);
-					 $$ = new NumLeaf($1);}
+	NUM				{$$ = new NumLeaf($1);
+					 System.out.println("num =" + $1);}
 	;
 
 
 %%
   /* reference to lexer object */
   private Yylex lexer;
-  private Node root;
+  private ArrayList<Node> root = new ArrayList<Node>();
 
   private int yylex () {
     int yyl_return = -1;
@@ -92,19 +97,25 @@ num	:
   public static void main(String args[]) throws IOException {
     System.out.println("Cocoon Parsing");
     Parser yyparser = new Parser(new FileReader(args[0]));
-    yyparser.yyparse();
-    yyparser. root.getTag(); 
+    yyparser.yyparse(); 
     inOrderTraversal(yyparser.root);
   }
 
-  public static Node inOrderTraversal(Node root) {
-	 if(root == null){
-		 return null;
-	 }else{
-		 inOrderTraversal(root.getLeft());
-		 root.getTag();		
-		 inOrderTraversal(root.getRight());
+  public static void inOrderTraversal(ArrayList<Node> root) {
+	 System.out.printf("inOrderTraversal()\n");
+	 for(int i = 0; i < root.size(); i++) {
+		inOrderTraversal(root.get(i));
 	 }
-	 return root;
+   }
+
+   public static Node inOrderTraversal(Node stmt) {
+	 if(stmt == null){
+	 	 return null;
+	 }else{
+	  	 inOrderTraversal(stmt.getLeft());
+	 	 stmt.getTag();		
+	 	 inOrderTraversal(stmt.getRight());
+	 }
+	 return stmt;
    }
 

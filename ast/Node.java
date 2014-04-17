@@ -7,11 +7,11 @@ public class Node {
 
 	public Node(String op, Object object) {
 		this.op = op;
-		this.right = (Node) object ; 
-		this.left = null;
+		this.left = (Node) object; 
+		this.right = null;
 	}
 
-	public Node(String op, Object right, Object left) {
+	public Node(String op, Object left, Object right) {
 		this.op = op;
 		this.right = (Node) right;
 		this.left = (Node) left;

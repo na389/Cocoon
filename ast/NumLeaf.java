@@ -4,7 +4,7 @@ public class NumLeaf extends Node {
 	int value;
 	
 	public NumLeaf(int value) {
-		super("LEAF", null, null);
+		super("NUM LEAF : " + value, null, null);
 		this.value = value;
 	}
 }

@@ -4,7 +4,7 @@ public class IDLeaf extends Node {
 	private String value;
 	
 	public IDLeaf(String value) {
-		super("LEAF", null, null);
+		super("ID LEAF : " + value, null, null);
 		this.value = value;
 	}
 }
