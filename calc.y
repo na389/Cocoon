@@ -2,8 +2,8 @@
  import ast.Node;
  import ast.NumLeaf;
  import ast.IDLeaf;
+ import ast.SyntaxTreeImpl;
  import java.io.*;
- import java.util.ArrayList;
 %}
       
 %token MAIN IMG GREYSCALE SYSOUT
@@ -14,8 +14,7 @@
 %%
 
 program	:
-	MAIN '{' stmts '}' 		{/* Traversal */
-					 System.out.println("program { stmts }");}
+	MAIN '{' stmts '}' 		{System.out.println("program { stmts }");}
 	;
 
 stmts	: 				{System.out.println("stmts -> epsilon");}
@@ -23,11 +22,11 @@ stmts	: 				{System.out.println("stmts -> epsilon");}
 	; 
 
 stmt	: 
-	decl				{root.add((Node) $1);
+	decl				{AST.insert((Node) $1);
 					 System.out.println("stmt -> decl");}
-	| assignment 			{root.add((Node) $1);
+	| assignment 			{AST.insert((Node) $1);
 					 System.out.println("stmt -> assignment");}
-	| s_call			{root.add((Node) $1);
+	| s_call			{AST.insert((Node) $1);
 					 System.out.println("stmt -> s_call");}
 	;
 
@@ -58,7 +57,7 @@ s_call  :
 
 id :
 	ID				{$$ = new IDLeaf($1);
-					 System.out.println("id = " + $1); }
+					 System.out.println("id = " + $1);}
 	;
 
 num	:
@@ -70,7 +69,7 @@ num	:
 %%
   /* reference to lexer object */
   private Yylex lexer;
-  private ArrayList<Node> root = new ArrayList<Node>();
+  private SyntaxTreeImpl AST;
 
   private int yylex () {
     int yyl_return = -1;
@@ -90,32 +89,17 @@ num	:
   }
 
   /* constructor taking in File input */
-  public Parser(Reader r) {
+  public Parser(Reader r, SyntaxTreeImpl AST) {
     lexer = new Yylex(r, this);
+    this.AST = AST;
   }
 
   public static void main(String args[]) throws IOException {
     System.out.println("Cocoon Parsing");
-    Parser yyparser = new Parser(new FileReader(args[0]));
-    yyparser.yyparse(); 
-    inOrderTraversal(yyparser.root);
+    SyntaxTreeImpl AST = new SyntaxTreeImpl(); 
+    Parser yyparser = new Parser(new FileReader(args[0]), AST);
+    yyparser.yyparse();  
+    AST.traversal();
   }
 
-  public static void inOrderTraversal(ArrayList<Node> root) {
-	 System.out.printf("inOrderTraversal()\n");
-	 for(int i = 0; i < root.size(); i++) {
-		inOrderTraversal(root.get(i));
-	 }
-   }
-
-   public static Node inOrderTraversal(Node stmt) {
-	 if(stmt == null){
-	 	 return null;
-	 }else{
-	  	 inOrderTraversal(stmt.getLeft());
-	 	 stmt.getTag();		
-	 	 inOrderTraversal(stmt.getRight());
-	 }
-	 return stmt;
-   }
 
