@@ -14,7 +14,8 @@
 %%
 
 program	:
-	MAIN '{' stmts '}' 		{System.out.println("program { stmts }");}
+	MAIN '{' stmts '}' 		{ /* Comment */
+					System.out.println("program { stmts }");}
 	;
 
 stmts	: 				{System.out.println("stmts -> epsilon");}
