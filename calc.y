@@ -3,6 +3,7 @@
  import ast.NumLeaf;
  import ast.IDLeaf;
  import ast.SyntaxTreeImpl;
+ import java.util.*;
  import java.io.*;
 %}
       
@@ -45,7 +46,7 @@ assignment
 expr 	: 
 	id				{$$ = $1;
 					 System.out.println("expr -> id");} 
-	| id '[' num ']'		{$$ = new Node("BATCH", $1, $3);
+	| id '[' num ']'		{$$ = new Node("[]", $1, $3);
 					 System.out.println("expr -> id [ num ]");}
 	| GREYSCALE '(' id ')'		{$$ = new Node("GREYSCALE", $3); 				
 					 System.out.println("expr -> GREYSCALE ( id )");}
@@ -99,8 +100,10 @@ num	:
     System.out.println("Cocoon Parsing");
     SyntaxTreeImpl AST = new SyntaxTreeImpl(); 
     Parser yyparser = new Parser(new FileReader(args[0]), AST);
-    yyparser.yyparse();  
-    AST.traversal();
+    yyparser.yyparse(); 
+    System.out.println("PRINTING THE AST\n"); 
+    ArrayList<Node> result = AST.traversal();
+    for (Node node : result) node.getTag();
   }
 
 

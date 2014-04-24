@@ -15,24 +15,24 @@ public class SyntaxTreeImpl {
 		}
 	}
 
-	public void traversal() {
+	public ArrayList<Node> traversal() {
+		ArrayList<Node> result = new ArrayList<Node>();
 		for (Node stmt : root) {
-			traversal(stmt);
-		}
+			traversal(stmt, result);
+		}	
+		return result;
 	} 
 
-	private Node traversal(Node node) {
+	private Node traversal(Node node, ArrayList<Node> array) {
 		if (node == null) {
 			return null;
 		}		
 		else {
-			node.getTag();
-			traversal(node.getLeft());
-			traversal(node.getRight());
+			array.add(node);
+			traversal(node.getLeft(), array);
+			traversal(node.getRight(), array);
 		}
-		return node;
-		
-		
+		return node;	
 	}
 	
 }

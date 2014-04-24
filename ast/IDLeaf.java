@@ -1,10 +1,14 @@
 package ast;
 
 public class IDLeaf extends Node {
-	private String value;
+	private String lexeme;
 	
-	public IDLeaf(String value) {
-		super("ID LEAF : " + value, null, null);
-		this.value = value;
+	public IDLeaf(String lexeme) {
+		super("ID", null, null);
+		this.lexeme = lexeme;
+	}
+
+	String getLexeme() {
+		return lexeme;
 	}
 }
